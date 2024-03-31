@@ -2,173 +2,161 @@ package ru.sber_tech.prod_mobile.screens.addMeetScreen
 
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
-import kotlinx.coroutines.launch
+import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
-import ru.sber_tech.prod_mobile.R
+import ru.sber_tech.domain.addMeetScreen.AddMeetState.*
+import ru.sber_tech.prod_mobile.R.drawable
 import ru.sber_tech.prod_mobile.components.SegmentedButtonSelect
+import ru.sber_tech.prod_mobile.components.TimePickerDialog
 import ru.sber_tech.prod_mobile.components.YandexMap
-import java.util.Calendar
-import java.util.Date
+import ru.sber_tech.prod_mobile.utils.DateUtils
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @Composable
-fun AddMeetScreen(){
+fun AddMeetScreen(navController: NavController) {
     val viewModel = koinViewModel<AddMeetScreenViewModel>()
-    val segmentedButtonState = viewModel.segmentedButtonState.collectAsState().value
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(contentAlignment = Alignment.Center){
-            YandexMap()
-            Image(painter = painterResource(id = R.drawable.baseline_album_24), contentDescription = "", Modifier.size(20.dp))
+    
+    LaunchedEffect(key1 = Unit, block = {
+        viewModel.loadElements()
+    })
+    
+    when (val uiState = viewModel.addMeetState.collectAsState().value) {
+        is Adding -> Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Box(contentAlignment = Alignment.Center) {
+                YandexMap()
+                Image(
+                    painter = painterResource(id = drawable.map_cursor),
+                    contentDescription = "",
+                    Modifier.size(20.dp)
+                )
+            }
+            SegmentedButtonSelect(
+                selectedElements = uiState.model.selectedEvents,
+                options = listOf("adasdsad", "asdasd", "sdfsdfds")
+            ) {
+                viewModel.addOrDeleteElement(it)
+            }
+            PickDateDialog(onConfirm = {
+                viewModel.setDate(it)
+            })
+            PickTimeDialog(onConfirm = {
+                viewModel.setTime(it)
+            })
+            Button(onClick = {
+                viewModel.publish()
+                navController.popBackStack()
+            }) {
+                Text(text = "Готово")
+            }
         }
-        SegmentedButtonSelect(selectedElements = segmentedButtonState, options = listOf("adasdsad", "asdasd", "sdfsdfds")) {
-            viewModel.addOrDeleteElement(it)
+        
+        is ErrorOnReceipt -> Box(modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = "Error",
+                modifier = Modifier.align(Alignment.Center),
+                textAlign = TextAlign.Center,
+            )
         }
-        DatePickerDialog()
-
-
-
-
+        
+        is Loading -> Box(modifier = Modifier.fillMaxSize()) {
+            CircularProgressIndicator()
+        }
     }
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun DatePickerDialog() {
-    val snackState = remember { SnackbarHostState() }
-    val snackScope = rememberCoroutineScope()
-    SnackbarHost(hostState = snackState, Modifier)
-    val openDialog = remember { mutableStateOf(false) }
-    Button(onClick = { openDialog.value = true }) {
+fun PickDateDialog(onConfirm: (String) -> Unit) {
+    var openDialog by remember { mutableStateOf(false) }
+    
+    Button(onClick = { openDialog = true }) {
         Text(text = "Выбрать дату")
     }
-    if (openDialog.value) {
+    
+    if (openDialog) {
         val datePickerState = rememberDatePickerState()
+        val formattedDate by remember {
+            derivedStateOf {
+                DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                    .format(DateUtils.convertMillisToLocalDate(datePickerState.selectedDateMillis!!))
+            }
+        }
         val confirmEnabled = remember {
             derivedStateOf { datePickerState.selectedDateMillis != null }
         }
         DatePickerDialog(
             onDismissRequest = {
-                openDialog.value = false
+                openDialog = false
             },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        openDialog.value = false
-                        snackScope.launch {
-                            snackState.showSnackbar(
-                                "Selected date timestamp: ${datePickerState.selectedDateMillis}"
-                            )
-                        }
-                    },
-                    enabled = confirmEnabled.value
+                        openDialog = false
+                        onConfirm(formattedDate)
+                    }, enabled = confirmEnabled.value
                 ) {
                     Text("OK")
                 }
             },
             dismissButton = {
-                TextButton(
-                    onClick = {
-                        openDialog.value = false
-                    }
-                ) {
+                TextButton(onClick = {
+                    openDialog = false
+                }) {
                     Text("Cancel")
                 }
-            }
+            },
         ) {
             DatePicker(state = datePickerState)
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimePickerDialog(
-    title: String = "Select Time",
-    onCancel: () -> Unit,
-    onConfirm: () -> Unit,
-    toggle: @Composable () -> Unit = {},
-    content: @Composable () -> Unit,
-) {
-    Dialog(
-        onDismissRequest = onCancel,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-    ) {
-        Surface(
-            shape = MaterialTheme.shapes.extraLarge,
-            tonalElevation = 6.dp,
-            modifier = Modifier
-                .width(IntrinsicSize.Min)
-                .height(IntrinsicSize.Min)
-                .background(
-                    shape = MaterialTheme.shapes.extraLarge,
-                    color = MaterialTheme.colorScheme.surface
-                ),
+fun PickTimeDialog(onConfirm: (String) -> Unit) {
+    var openDialog by remember { mutableStateOf(false) }
+    
+    Button(onClick = { openDialog = true }) {
+        Text(text = "Выбрать время")
+    }
+    
+    if (openDialog) {
+        val timePickerState = rememberTimePickerState()
+        val pickedTime by remember {
+            derivedStateOf { LocalTime.of(timePickerState.hour, timePickerState.minute) }
+        }
+        val formattedTime by remember {
+            derivedStateOf { DateTimeFormatter.ofPattern("hh:mm").format(pickedTime) }
+        }
+        
+        TimePickerDialog(
+            onDismissRequest = { openDialog = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    openDialog = false
+                    onConfirm(formattedTime)
+                }) { Text("OK") }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    openDialog = false
+                }) { Text("Cancel") }
+            },
         ) {
-            Column(
-                modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp),
-                    text = title,
-                    style = MaterialTheme.typography.labelMedium
-                )
-                content()
-                Row(modifier = Modifier
-                    .height(40.dp)
-                    .fillMaxWidth()
-                ) {
-                    toggle()
-                    Spacer(modifier = Modifier.weight(1f))
-                    TextButton(onClick = onCancel) {
-                        Text("Cancel")
-                    }
-                    TextButton(onClick = onConfirm) {
-                        Text("OK")
-                    }
-                }
-            }
+            TimePicker(state = timePickerState)
         }
     }
 }

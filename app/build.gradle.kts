@@ -58,7 +58,6 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    //implementation(libs.androidx.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -73,7 +72,7 @@ dependencies {
     //Koin
     implementation(libs.koin.androidx.compose)
 
-    implementation("com.yandex.android:maps.mobile:4.5.1-lite")
+    implementation(libs.maps.mobile)
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
     implementation("androidx.compose.material3:material3-android:1.2.0")
