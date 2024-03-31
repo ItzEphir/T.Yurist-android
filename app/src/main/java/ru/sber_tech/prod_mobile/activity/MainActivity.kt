@@ -18,8 +18,6 @@ import ru.sber_tech.prod_mobile.ui.theme.Prod_mobileTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MapKitFactory.setApiKey("6c6cd304-9d0b-4a28-a718-27e056899465")
-        MapKitFactory.initialize(this)
         setContent {
             val navController = rememberNavController()
             Prod_mobileTheme {
