@@ -1,7 +1,6 @@
 package ru.sber_tech.prod_mobile.screens.addMeetScreen
 
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -19,7 +18,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import org.koin.androidx.compose.koinViewModel
 import ru.sber_tech.domain.addMeetScreen.AddMeetState.*
 import ru.sber_tech.prod_mobile.R.drawable
 import ru.sber_tech.prod_mobile.components.SegmentedButtonSelect
@@ -27,11 +25,14 @@ import ru.sber_tech.prod_mobile.components.TimePickerDialog
 import ru.sber_tech.prod_mobile.components.YandexMap
 import ru.sber_tech.prod_mobile.navigation.Destinations
 import ru.sber_tech.prod_mobile.utils.DateUtils
+import ru.sber_tech.prod_mobile.utils.GetLocation
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewModel) {
+
+    GetLocation(viewModel = viewModel)
 
     LaunchedEffect(key1 = Unit, block = {
         viewModel.loadElements()

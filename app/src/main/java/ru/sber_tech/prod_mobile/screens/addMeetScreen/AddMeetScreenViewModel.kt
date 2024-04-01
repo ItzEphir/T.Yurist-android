@@ -1,5 +1,6 @@
 package ru.sber_tech.prod_mobile.screens.addMeetScreen
 
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,6 +35,8 @@ class AddMeetScreenViewModel(
     private val _addressState = MutableStateFlow<String?>(null)
     val addressState = _addressState.asStateFlow()
 
+    private val _location = MutableStateFlow<Location?>(null)
+
     fun loadElements() {
         _addMeetState.value = Adding(model = AddMeetModel(emptyList(), "", "", 0.0, 0.0))
     }
@@ -55,7 +58,7 @@ class AddMeetScreenViewModel(
         }
     }
 
-    fun setReadCoordsClbk(rCCallback: ReadCoordinatesCallBack){
+    fun setReadCoordsClbk(rCCallback: ReadCoordinatesCallBack) {
         readCoordinatesCallback = rCCallback
     }
 
@@ -102,7 +105,7 @@ class AddMeetScreenViewModel(
 
     fun setCameraPosition(address: String) {
         viewModelScope.launch {
-            getCoordinatesByAddressUseCase(address).also{
+            getCoordinatesByAddressUseCase(address).also {
                 Log.d("WWW", it.toString())
             }?.let {
                 if (addMeetState.value is Adding) {
@@ -117,6 +120,29 @@ class AddMeetScreenViewModel(
 
                     readCoordinatesCallback.read(CoordinatesPoint(it.latitude, it.longitude))
                 }
+            }
+        }
+    }
+
+    fun setLocation(location: Location?) {
+        _location.value = location
+        if (addMeetState.value is Adding) {
+            val addingState = addMeetState.value as Adding
+            if (location != null) {
+                _addMeetState.value =
+                    addingState.copy(
+                        model = addingState.model.copy(
+                            latitude = location.latitude,
+                            longitude = location.longitude
+                        )
+                    )
+
+                readCoordinatesCallback.read(
+                    CoordinatesPoint(
+                        location.latitude,
+                        location.longitude
+                    )
+                )
             }
         }
     }
