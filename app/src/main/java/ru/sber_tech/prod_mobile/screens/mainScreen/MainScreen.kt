@@ -16,27 +16,29 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
 import ru.sber_tech.domain.mainScreen.AllMeetsState
+import ru.sber_tech.domain.mainScreen.AllMeetsState.*
 import ru.sber_tech.prod_mobile.navigation.Destinations
 
 @Composable
 fun MainScreen(navController: NavController){
     val viewModel = koinViewModel<MainScreenViewModel>()
 
-    val allMeetsState = viewModel.allMeetsState.collectAsState().value
+    val allMeetsState by viewModel.allMeetsState.collectAsState()
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Button(onClick = { navController.navigate(Destinations.AddMeetScreenRoute.route) }) {
             Text(text = "Новая встреча")
         }
         when(allMeetsState){
-            is AllMeetsState.AllMeets -> {
+            is AllMeets -> {
                 LazyColumn {
-                    items(allMeetsState.list){item ->
+                    items((allMeetsState as AllMeets).list){ item ->
                         Card(modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
@@ -50,14 +52,14 @@ fun MainScreen(navController: NavController){
                     }
                 }
             }
-            AllMeetsState.ErrorOnReceipt -> {
+            ErrorOnReceipt -> {
                 Box(
                     Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                 ) {
                     Text(text = "Ошибка при получении")
                 }
             }
-            AllMeetsState.Loading -> {
+            Loading -> {
                 Box(
                     Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                 ) {

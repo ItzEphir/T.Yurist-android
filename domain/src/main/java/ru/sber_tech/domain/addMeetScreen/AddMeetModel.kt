@@ -4,4 +4,6 @@ data class AddMeetModel(
     val selectedEvents: List<String>,
     val time: String,
     val date: String,
+    val latitude: Double,
+    val longitude: Double,
 )

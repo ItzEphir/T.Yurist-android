@@ -15,14 +15,14 @@ import ru.sber_tech.domain.addMeetScreen.MeetStatus.SUCCESS
 import ru.sber_tech.prod_mobile.utils.GetCoordsCallBack
 
 class AddMeetScreenViewModel(private val addMeetUseCase: AddMeetUseCase) : ViewModel() {
-
-    lateinit var getCoordinates: GetCoordsCallBack
+    
+    private lateinit var getCoordinates: GetCoordsCallBack
     
     private val _addMeetState = MutableStateFlow<AddMeetState>(Loading)
     val addMeetState = _addMeetState.asStateFlow()
     
     fun loadElements() {
-        _addMeetState.value = Adding(model = AddMeetModel(emptyList(), "", ""))
+        _addMeetState.value = Adding(model = AddMeetModel(emptyList(), "", "", 0.0, 0.0))
     }
     
     fun addOrDeleteElement(element: String) {
@@ -41,8 +41,8 @@ class AddMeetScreenViewModel(private val addMeetUseCase: AddMeetUseCase) : ViewM
             }
         }
     }
-
-    fun setCoords(getCoords: GetCoordsCallBack){
+    
+    fun setCoords(getCoords: GetCoordsCallBack) {
         getCoordinates = getCoords
     }
     
@@ -71,11 +71,18 @@ class AddMeetScreenViewModel(private val addMeetUseCase: AddMeetUseCase) : ViewM
     fun publish(onSuccess: () -> Unit, onError: () -> Unit) {
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
-            
-            if(addingState.model.date == "" || addingState.model.time == "" || addingState.model.selectedEvents.isEmpty()){
+            val point = getCoordinates.getCoords()
+            if (addingState.model.date == "" || addingState.model.time == "" || addingState.model.selectedEvents.isEmpty() || point == null) {
                 return
             }
-            
+            println(point.latitude)
+            println(point.longitude)
+            _addMeetState.value = addingState.copy(
+                model = addingState.model.copy(
+                    latitude = point.latitude,
+                    longitude = point.longitude
+                )
+            )
             viewModelScope.launch {
                 when (addMeetUseCase.execute(addingState.model)) {
                     SUCCESS          -> onSuccess()

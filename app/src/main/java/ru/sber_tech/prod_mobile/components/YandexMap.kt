@@ -44,7 +44,6 @@ fun YandexMap(viewModel: AddMeetScreenViewModel) {
                     val worldPoint = view.mapWindow.screenToWorld(centerPoint)
                     return worldPoint
                 }
-
             }
             viewModel.setCoords(getCoords)
         }
