@@ -5,6 +5,9 @@ class GetAllMeetsUseCase(
 ) {
 
     suspend fun execute(): AllMeetsState {
-        return repository.getAllMeets()
+        return when(val meets = repository.getAllMeets(1)){
+            null -> AllMeetsState.ErrorOnReceipt
+            else -> AllMeetsState.AllMeets(meets)
+        }
     }
 }

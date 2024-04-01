@@ -9,7 +9,7 @@ data class MeetDto(
     val dateTime: String,
     @SerialName("place_address")
     val placeAddress: String,
-    @SerialName("place_longitude")
+    @SerialName("place_longtitude")
     val placeLongitude: Double,
     @SerialName("place_latitude")
     val placeLatitude: Double,
@@ -17,7 +17,7 @@ data class MeetDto(
     val operationIds: List<Int>,
     val id: String,
     @SerialName("representative_id")
-    val representativeId: Int,
+    val representativeId: Int? = null,
     @SerialName("approximate_end_datetime")
     val approximateEndDatetime: String,
     @SerialName("client_side_people")

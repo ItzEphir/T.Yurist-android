@@ -50,9 +50,10 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
                     Modifier.size(20.dp)
                 )
             }
+            val operations by viewModel.operations.collectAsStateWithLifecycle()
             SegmentedButtonSelect(
                 selectedElements = uiState.model.selectedEvents,
-                options = listOf("adasdsad", "asdasd", "sdfsdfds")
+                options = operations
             ) {
                 viewModel.addOrDeleteElement(it)
             }

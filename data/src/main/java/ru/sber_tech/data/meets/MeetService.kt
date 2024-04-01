@@ -11,22 +11,26 @@ import kotlinx.serialization.json.Json
 
 class MeetService(val httpClient: HttpClient) {
     private val json = Json { ignoreUnknownKeys = true }
-    suspend fun getMeets(limit: Int, offset: Int): List<MeetDto> {
+    suspend fun getMeets(limit: Int, offset: Int): List<MeetDto>? {
         return try {
             val response =
-                httpClient.get("http://158.160.114.41:8080/meets?limit=$limit&offset=$offset")
+                httpClient.get("http://158.160.114.41:8080/meets?limit=$limit&offset=$offset"){
+                    headers["Content-Type"]="application/json"
+                }
             val jsonString = response.bodyAsText()
             json.decodeFromString<List<MeetDto>>(jsonString)
         } catch (e: Exception) {
             e.printStackTrace()
-            return emptyList()
+            return null
         }
     }
 
     suspend fun getMeet(id: String): MeetDto? {
         return try {
             val response =
-                httpClient.get("http://158.160.114.41:8080/meet/$id")
+                httpClient.get("http://158.160.114.41:8080/meet/$id"){
+                    headers["Content-Type"]="application/json"
+                }
             val jsonString = response.bodyAsText()
             json.decodeFromString<MeetDto>(jsonString)
         } catch (e: Exception) {
@@ -38,9 +42,11 @@ class MeetService(val httpClient: HttpClient) {
     suspend fun createMeet(meet: ShortMeetDto): MeetDto? {
         return try {
             val response = httpClient.post("http://158.160.114.41:8080/meet"){
+                headers["Content-Type"]="application/json"
                 setBody(meet)
             }
             val jsonString = response.bodyAsText()
+            println(jsonString)
             json.decodeFromString<MeetDto>(jsonString)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -51,6 +57,7 @@ class MeetService(val httpClient: HttpClient) {
     suspend fun updateMeet(id: String, meet: ShortMeetDto): MeetDto? {
         return try {
             val response = httpClient.patch("http://158.160.114.41:8080/meet/$id") {
+                headers["Content-Type"]="application/json"
                 setBody(meet)
             }
             val jsonString = response.bodyAsText()
@@ -63,7 +70,9 @@ class MeetService(val httpClient: HttpClient) {
 
     suspend fun deleteMeet(id: String): Boolean {
         return try {
-            val response = httpClient.delete("http://158.160.114.41:8080/meets/$id")
+            val response = httpClient.delete("http://158.160.114.41:8080/meets/$id"){
+                headers["Content-Type"]="application/json"
+            }
             val jsonString = response.bodyAsText()
             json.decodeFromString<String>(jsonString)
             true

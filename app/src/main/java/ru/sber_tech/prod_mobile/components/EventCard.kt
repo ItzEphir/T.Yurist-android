@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.sber_tech.domain.mainScreen.LiteMeetModel
+import ru.sber_tech.domain.operations.OperationModel
 import ru.sber_tech.prod_mobile.ui.theme.Prod_mobileTheme
 
 @Composable
@@ -27,13 +28,5 @@ fun EventCard(meetModel: LiteMeetModel, modifier: Modifier = Modifier) {
             
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun EventCardPreview() {
-    Prod_mobileTheme {
-        EventCard(meetModel = LiteMeetModel(id = "dfghj"))
     }
 }
