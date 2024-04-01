@@ -50,6 +50,13 @@ class AddMeetScreenViewModel(
         getCoordinates = getCoords
     }
 
+    fun setPoint(latitude: Double, longitude: Double){
+        if(addMeetState.value is Adding){
+            val addingState = addMeetState.value as Adding
+            _addMeetState.value = addingState.copy(model = addingState.model.copy(latitude = latitude, longitude = longitude))
+        }
+    }
+
     fun setDate(date: String) {
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
@@ -79,8 +86,6 @@ class AddMeetScreenViewModel(
             if (addingState.model.date == "" || addingState.model.time == "" || addingState.model.selectedEvents.isEmpty() || point == null) {
                 return
             }
-            println(point.latitude)
-            println(point.longitude)
             _addMeetState.value = addingState.copy(
                 model = addingState.model.copy(
                     latitude = point.latitude,
