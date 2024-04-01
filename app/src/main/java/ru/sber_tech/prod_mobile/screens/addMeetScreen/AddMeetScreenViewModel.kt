@@ -12,8 +12,11 @@ import ru.sber_tech.domain.addMeetScreen.AddMeetState.Loading
 import ru.sber_tech.domain.addMeetScreen.AddMeetUseCase
 import ru.sber_tech.domain.addMeetScreen.MeetStatus.ERROR_ON_RECEIPT
 import ru.sber_tech.domain.addMeetScreen.MeetStatus.SUCCESS
+import ru.sber_tech.prod_mobile.utils.GetCoordsCallBack
 
 class AddMeetScreenViewModel(private val addMeetUseCase: AddMeetUseCase) : ViewModel() {
+
+    lateinit var getCoordinates: GetCoordsCallBack
     
     private val _addMeetState = MutableStateFlow<AddMeetState>(Loading)
     val addMeetState = _addMeetState.asStateFlow()
@@ -37,6 +40,10 @@ class AddMeetScreenViewModel(private val addMeetUseCase: AddMeetUseCase) : ViewM
                 )
             }
         }
+    }
+
+    fun setCoords(getCoords: GetCoordsCallBack){
+        getCoordinates = getCoords
     }
     
     fun setDate(date: String) {

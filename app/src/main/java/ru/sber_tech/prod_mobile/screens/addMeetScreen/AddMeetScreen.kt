@@ -37,7 +37,7 @@ fun AddMeetScreen(navController: NavController) {
     when (val uiState = viewModel.addMeetState.collectAsState().value) {
         is Adding         -> Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Box(contentAlignment = Alignment.Center) {
-                YandexMap()
+                YandexMap(viewModel)
                 Image(
                     painter = painterResource(id = drawable.map_cursor),
                     contentDescription = "",
