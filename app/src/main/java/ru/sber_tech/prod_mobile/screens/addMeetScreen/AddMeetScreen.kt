@@ -1,8 +1,10 @@
 package ru.sber_tech.prod_mobile.screens.addMeetScreen
 
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
 import ru.sber_tech.domain.addMeetScreen.AddMeetState.*
@@ -29,13 +32,13 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun AddMeetScreen(navController: NavController) {
     val viewModel = koinViewModel<AddMeetScreenViewModel>()
-    
+
     LaunchedEffect(key1 = Unit, block = {
         viewModel.loadElements()
     })
-    
-    when (val uiState = viewModel.addMeetState.collectAsState().value) {
-        is Adding         -> Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+    when (val uiState = viewModel.addMeetState.collectAsStateWithLifecycle().value) {
+        is Adding -> Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Box(contentAlignment = Alignment.Center) {
                 YandexMap.Render(viewModel, onBack = {
                     navController.popBackStack()
@@ -52,6 +55,13 @@ fun AddMeetScreen(navController: NavController) {
             ) {
                 viewModel.addOrDeleteElement(it)
             }
+
+            val address by viewModel.addressState.collectAsStateWithLifecycle()
+            Text(text = address ?: "", modifier = Modifier.clickable {
+                // Go to new screen
+                Log.d("GGG", "ehfghjefgehfjkelkfefghefehfg")
+            })
+
             PickDateDialog(onConfirm = {
                 viewModel.setDate(it)
             })
@@ -72,7 +82,7 @@ fun AddMeetScreen(navController: NavController) {
                 Text(text = "Готово")
             }
         }
-        
+
         is ErrorOnReceipt -> Box(modifier = Modifier.fillMaxSize()) {
             Text(
                 text = "Error",
@@ -80,8 +90,8 @@ fun AddMeetScreen(navController: NavController) {
                 textAlign = TextAlign.Center,
             )
         }
-        
-        is Loading        -> Box(modifier = Modifier.fillMaxSize()) {
+
+        is Loading -> Box(modifier = Modifier.fillMaxSize()) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
     }
@@ -95,8 +105,8 @@ fun PickDateDialog(onConfirm: (String) -> Unit) {
     Button(onClick = { openDialog = true }) {
         Text(text = "Выбрать дату")
     }
-    
-    
+
+
     if (openDialog) {
         val datePickerState = rememberDatePickerState()
         val formattedDate by remember {
@@ -142,7 +152,7 @@ fun PickTimeDialog(onConfirm: (String) -> Unit) {
     Button(onClick = { openDialog = true }) {
         Text(text = "Выбрать время")
     }
-    
+
     if (openDialog) {
         val timePickerState = rememberTimePickerState()
         val pickedTime by remember {
@@ -151,7 +161,7 @@ fun PickTimeDialog(onConfirm: (String) -> Unit) {
         val formattedTime by remember {
             derivedStateOf { DateTimeFormatter.ofPattern("hh:mm").format(pickedTime) }
         }
-        
+
         TimePickerDialog(
             onDismissRequest = { openDialog = false },
             confirmButton = {

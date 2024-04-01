@@ -25,6 +25,9 @@ class AddMeetScreenViewModel(
     private val _addMeetState = MutableStateFlow<AddMeetState>(Loading)
     val addMeetState = _addMeetState.asStateFlow()
 
+    private val _addressState = MutableStateFlow<String?>(null)
+    val addressState = _addressState.asStateFlow()
+
     fun loadElements() {
         _addMeetState.value = Adding(model = AddMeetModel(emptyList(), "", "", 0.0, 0.0))
     }
@@ -50,10 +53,18 @@ class AddMeetScreenViewModel(
         getCoordinates = getCoords
     }
 
-    fun setPoint(latitude: Double, longitude: Double){
-        if(addMeetState.value is Adding){
+    fun setPoint(latitude: Double, longitude: Double) {
+        if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
-            _addMeetState.value = addingState.copy(model = addingState.model.copy(latitude = latitude, longitude = longitude))
+            _addMeetState.value = addingState.copy(
+                model = addingState.model.copy(
+                    latitude = latitude,
+                    longitude = longitude
+                )
+            )
+            viewModelScope.launch {
+                _addressState.value = getAddressUseCase.invoke(latitude, longitude)
+            }
         }
     }
 
