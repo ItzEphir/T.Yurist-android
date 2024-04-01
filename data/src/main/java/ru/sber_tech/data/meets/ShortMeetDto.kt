@@ -11,7 +11,7 @@ data class ShortMeetDto(
     val address:String,
     @SerialName("place_latitude")
     val latitude: Double,
-    @SerialName("place_longitude")
+    @SerialName("place_longtitude")
     val longitude: Double,
     @SerialName("operations_ids")
     val operationsIds: List<Int>
