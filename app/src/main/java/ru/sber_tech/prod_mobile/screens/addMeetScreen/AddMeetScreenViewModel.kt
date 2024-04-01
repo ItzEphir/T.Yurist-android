@@ -17,13 +17,15 @@ import ru.sber_tech.domain.addMeetScreen.MeetStatus.SUCCESS
 import ru.sber_tech.domain.getAddress.GetAddressUseCase
 import ru.sber_tech.domain.getCoordinates.CoordinatesPoint
 import ru.sber_tech.domain.getCoordinates.GetCoordinatesByAddressUseCase
+import ru.sber_tech.domain.searchScreen.SearchUseCase
 import ru.sber_tech.prod_mobile.utils.GetCoordsCallBack
 import ru.sber_tech.prod_mobile.utils.ReadCoordinatesCallBack
 
 class AddMeetScreenViewModel(
     private val addMeetUseCase: AddMeetUseCase,
     private val getAddressUseCase: GetAddressUseCase,
-    private val getCoordinatesByAddressUseCase: GetCoordinatesByAddressUseCase
+    private val getCoordinatesByAddressUseCase: GetCoordinatesByAddressUseCase,
+    private val searchUseCase: SearchUseCase
 ) : ViewModel() {
 
     private lateinit var getCoordinatesCallback: GetCoordsCallBack
@@ -37,11 +39,17 @@ class AddMeetScreenViewModel(
 
     private val _location = MutableStateFlow<Location?>(null)
 
+    private val _searchState = MutableStateFlow("")
+    val searchState = _searchState.asStateFlow()
+
+    private val _addresses = MutableStateFlow(emptyList<String>())
+    val addresses = _addresses.asStateFlow()
+
     fun loadElements() {
-        _addMeetState.value = Adding(model = AddMeetModel(emptyList(), "", "", 0.0,0.0))
+        _addMeetState.value = Adding(model = AddMeetModel(emptyList(), "", "", 0.0, 0.0))
     }
 
-    fun setDefaultCameraPosition(){
+    fun setDefaultCameraPosition() {
         readCoordinatesCallback.read(CoordinatesPoint(55.751400, 37.618844))
     }
 
@@ -149,6 +157,17 @@ class AddMeetScreenViewModel(
                 )
             }
         }
+    }
+
+    fun setSearchState(request: String) {
+        _searchState.value = request
+        val point = _location.value?.let {
+            CoordinatesPoint(it.latitude, it.longitude)
+        }
+        viewModelScope.launch {
+            _addresses.value = searchUseCase(request, point)
+        }
+
     }
 
     fun publish(onSuccess: () -> Unit, onError: () -> Unit) {

@@ -58,7 +58,8 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
             }
 
             val address by viewModel.addressState.collectAsStateWithLifecycle()
-            Text(text = address ?: "", modifier = Modifier.clickable {
+            Text(text = address ?: "Ждем", modifier = Modifier.clickable {
+                viewModel.setSearchState("")
                 navController.navigate(Destinations.SearchScreenRoute.route)
             })
 

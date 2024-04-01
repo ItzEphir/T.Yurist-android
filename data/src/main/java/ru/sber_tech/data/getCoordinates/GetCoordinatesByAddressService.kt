@@ -6,7 +6,7 @@ import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.json.Json
 import ru.sber_tech.domain.getCoordinates.CoordinatesPoint
 
-class GetCoordinatesByAddressService(val httpClient: HttpClient) {
+class GetCoordinatesByAddressService(private val httpClient: HttpClient) {
     private val json = Json { ignoreUnknownKeys = true }
     suspend fun getCoordinates(address: String): CoordinatesPoint? {
         return try {
