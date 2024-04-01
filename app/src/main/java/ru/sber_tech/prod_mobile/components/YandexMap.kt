@@ -46,6 +46,7 @@ fun YandexMap(viewModel: AddMeetScreenViewModel) {
                 }
 
             }
+            viewModel.setCoords(getCoords)
         }
     )
 }
