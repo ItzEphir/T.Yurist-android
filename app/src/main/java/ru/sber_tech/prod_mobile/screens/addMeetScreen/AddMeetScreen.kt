@@ -25,13 +25,13 @@ import ru.sber_tech.prod_mobile.R.drawable
 import ru.sber_tech.prod_mobile.components.SegmentedButtonSelect
 import ru.sber_tech.prod_mobile.components.TimePickerDialog
 import ru.sber_tech.prod_mobile.components.YandexMap
+import ru.sber_tech.prod_mobile.navigation.Destinations
 import ru.sber_tech.prod_mobile.utils.DateUtils
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun AddMeetScreen(navController: NavController) {
-    val viewModel = koinViewModel<AddMeetScreenViewModel>()
+fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewModel) {
 
     LaunchedEffect(key1 = Unit, block = {
         viewModel.loadElements()
@@ -58,8 +58,7 @@ fun AddMeetScreen(navController: NavController) {
 
             val address by viewModel.addressState.collectAsStateWithLifecycle()
             Text(text = address ?: "", modifier = Modifier.clickable {
-                // Go to new screen
-                Log.d("GGG", "ehfghjefgehfjkelkfefghefehfg")
+                navController.navigate(Destinations.SearchScreenRoute.route)
             })
 
             PickDateDialog(onConfirm = {

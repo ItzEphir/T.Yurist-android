@@ -1,5 +1,6 @@
 package ru.sber_tech.prod_mobile.screens.addMeetScreen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,14 +14,19 @@ import ru.sber_tech.domain.addMeetScreen.AddMeetUseCase
 import ru.sber_tech.domain.addMeetScreen.MeetStatus.ERROR_ON_RECEIPT
 import ru.sber_tech.domain.addMeetScreen.MeetStatus.SUCCESS
 import ru.sber_tech.domain.getAddress.GetAddressUseCase
+import ru.sber_tech.domain.getCoordinates.CoordinatesPoint
+import ru.sber_tech.domain.getCoordinates.GetCoordinatesByAddressUseCase
 import ru.sber_tech.prod_mobile.utils.GetCoordsCallBack
+import ru.sber_tech.prod_mobile.utils.ReadCoordinatesCallBack
 
 class AddMeetScreenViewModel(
     private val addMeetUseCase: AddMeetUseCase,
     private val getAddressUseCase: GetAddressUseCase,
+    private val getCoordinatesByAddressUseCase: GetCoordinatesByAddressUseCase
 ) : ViewModel() {
 
-    private lateinit var getCoordinates: GetCoordsCallBack
+    private lateinit var getCoordinatesCallback: GetCoordsCallBack
+    private lateinit var readCoordinatesCallback: ReadCoordinatesCallBack
 
     private val _addMeetState = MutableStateFlow<AddMeetState>(Loading)
     val addMeetState = _addMeetState.asStateFlow()
@@ -49,8 +55,12 @@ class AddMeetScreenViewModel(
         }
     }
 
+    fun setReadCoordsClbk(rCCallback: ReadCoordinatesCallBack){
+        readCoordinatesCallback = rCCallback
+    }
+
     fun setCoords(getCoords: GetCoordsCallBack) {
-        getCoordinates = getCoords
+        getCoordinatesCallback = getCoords
     }
 
     fun setPoint(latitude: Double, longitude: Double) {
@@ -90,10 +100,31 @@ class AddMeetScreenViewModel(
         }
     }
 
+    fun setCameraPosition(address: String) {
+        viewModelScope.launch {
+            getCoordinatesByAddressUseCase(address).also{
+                Log.d("WWW", it.toString())
+            }?.let {
+                if (addMeetState.value is Adding) {
+                    val addingState = addMeetState.value as Adding
+                    _addMeetState.value =
+                        addingState.copy(
+                            model = addingState.model.copy(
+                                latitude = it.latitude,
+                                longitude = it.longitude
+                            )
+                        )
+
+                    readCoordinatesCallback.read(CoordinatesPoint(it.latitude, it.longitude))
+                }
+            }
+        }
+    }
+
     fun publish(onSuccess: () -> Unit, onError: () -> Unit) {
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
-            val point = getCoordinates.getCoords()
+            val point = getCoordinatesCallback.getCoords()
             if (addingState.model.date == "" || addingState.model.time == "" || addingState.model.selectedEvents.isEmpty() || point == null) {
                 return
             }

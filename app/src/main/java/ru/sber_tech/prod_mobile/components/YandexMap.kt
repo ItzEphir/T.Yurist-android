@@ -17,6 +17,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContentProviderCompat.requireContext
+import com.yandex.mapkit.Animation
 import com.yandex.mapkit.ScreenPoint
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.map.CameraListener
@@ -24,10 +26,10 @@ import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.CameraUpdateReason
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
+import ru.sber_tech.domain.getCoordinates.CoordinatesPoint
 import ru.sber_tech.prod_mobile.screens.addMeetScreen.AddMeetScreenViewModel
 import ru.sber_tech.prod_mobile.utils.GetCoordsCallBack
-import kotlin.Boolean
-import kotlin.apply
+import ru.sber_tech.prod_mobile.utils.ReadCoordinatesCallBack
 
 
 object YandexMap {
@@ -71,8 +73,6 @@ object YandexMap {
         }
 
         AnimatedVisibility(visible = visible) {
-
-
             // Adds view to Compose
             AndroidView(
                 modifier = Modifier
@@ -83,7 +83,8 @@ object YandexMap {
                 factory = { context ->
                     MapView(context).apply {
                         view = this
-                        getMap().addCameraListener(cameraListener);
+                        getMap().addCameraListener(cameraListener)
+
                     }
                 },
                 update = { view ->
@@ -97,6 +98,23 @@ object YandexMap {
                         }
                     }
                     viewModel.setCoords(getCoords)
+
+                    val readCoords = object : ReadCoordinatesCallBack {
+                        override fun read(coordinatesPoint: CoordinatesPoint) {
+                            view.getMap().move(
+                                CameraPosition(
+                                    Point(
+                                        coordinatesPoint.latitude,
+                                        coordinatesPoint.longitude
+                                    ), 15.0f, 0.0f, 0.0f
+                                ),
+                                Animation(Animation.Type.SMOOTH, 1F),
+                                null
+                            )
+                        }
+
+                    }
+                    viewModel.setReadCoordsClbk(readCoords)
                 }
             )
         }
