@@ -84,6 +84,24 @@ object YandexMap {
                         view = this
                         getMap().addCameraListener(cameraListener)
 
+
+                        val readCoords = object : ReadCoordinatesCallBack {
+                            override fun read(coordinatesPoint: CoordinatesPoint) {
+                                view.getMap().move(
+                                    CameraPosition(
+                                        Point(
+                                            coordinatesPoint.latitude,
+                                            coordinatesPoint.longitude
+                                        ), 15.0f, 0.0f, 0.0f
+                                    ),
+                                    Animation(Animation.Type.SMOOTH, 1F),
+                                    null
+                                )
+                            }
+
+                        }
+                        viewModel.setReadCoordsClbk(readCoords)
+                        viewModel.setDefaultCameraPosition()
                     }
                 },
                 update = { view ->
@@ -97,23 +115,6 @@ object YandexMap {
                         }
                     }
                     viewModel.setCoords(getCoords)
-
-                    val readCoords = object : ReadCoordinatesCallBack {
-                        override fun read(coordinatesPoint: CoordinatesPoint) {
-                            view.getMap().move(
-                                CameraPosition(
-                                    Point(
-                                        coordinatesPoint.latitude,
-                                        coordinatesPoint.longitude
-                                    ), 15.0f, 0.0f, 0.0f
-                                ),
-                                Animation(Animation.Type.SMOOTH, 1F),
-                                null
-                            )
-                        }
-
-                    }
-                    viewModel.setReadCoordsClbk(readCoords)
                 }
             )
         }

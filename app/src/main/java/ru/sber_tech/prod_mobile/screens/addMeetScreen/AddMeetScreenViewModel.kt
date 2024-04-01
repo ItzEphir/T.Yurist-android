@@ -38,7 +38,11 @@ class AddMeetScreenViewModel(
     private val _location = MutableStateFlow<Location?>(null)
 
     fun loadElements() {
-        _addMeetState.value = Adding(model = AddMeetModel(emptyList(), "", "", 0.0, 0.0))
+        _addMeetState.value = Adding(model = AddMeetModel(emptyList(), "", "", 0.0,0.0))
+    }
+
+    fun setDefaultCameraPosition(){
+        readCoordinatesCallback.read(CoordinatesPoint(55.751400, 37.618844))
     }
 
     fun addOrDeleteElement(element: String) {
