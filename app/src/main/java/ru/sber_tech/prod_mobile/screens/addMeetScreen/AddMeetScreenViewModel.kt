@@ -5,8 +5,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import ru.sber_tech.data.addMeetScreen.ErrorState
-import ru.sber_tech.data.addMeetScreen.ErrorState.*
 import ru.sber_tech.domain.addMeetScreen.AddMeetModel
 import ru.sber_tech.domain.addMeetScreen.AddMeetState
 import ru.sber_tech.domain.addMeetScreen.AddMeetState.Adding
@@ -20,15 +18,11 @@ class AddMeetScreenViewModel(private val addMeetUseCase: AddMeetUseCase) : ViewM
     private val _addMeetState = MutableStateFlow<AddMeetState>(Loading)
     val addMeetState = _addMeetState.asStateFlow()
     
-    private val _errorState = MutableStateFlow<ErrorState?>(null)
-    val errorState = _errorState.asStateFlow()
-    
     fun loadElements() {
         _addMeetState.value = Adding(model = AddMeetModel(emptyList(), "", ""))
     }
     
     fun addOrDeleteElement(element: String) {
-        _errorState.value = null
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
             if (element in addingState.model.selectedEvents) {
@@ -46,7 +40,6 @@ class AddMeetScreenViewModel(private val addMeetUseCase: AddMeetUseCase) : ViewM
     }
     
     fun setDate(date: String) {
-        _errorState.value = null
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
             _addMeetState.value = addingState.copy(
@@ -58,7 +51,6 @@ class AddMeetScreenViewModel(private val addMeetUseCase: AddMeetUseCase) : ViewM
     }
     
     fun setTime(time: String) {
-        _errorState.value = null
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
             _addMeetState.value = addingState.copy(
@@ -69,21 +61,18 @@ class AddMeetScreenViewModel(private val addMeetUseCase: AddMeetUseCase) : ViewM
         }
     }
     
-    fun publish(onSuccess: () -> Unit) {
+    fun publish(onSuccess: () -> Unit, onError: () -> Unit) {
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
-            if (addingState.model.date == "") _errorState.value = DateError
-            if (addingState.model.time == "") _errorState.value = TimeError
-            if (addingState.model.selectedEvents.isEmpty()) _errorState.value = EventError
             
-            if(errorState.value != null){
+            if(addingState.model.date == "" || addingState.model.time == "" || addingState.model.selectedEvents.isEmpty()){
                 return
             }
             
             viewModelScope.launch {
                 when (addMeetUseCase.execute(addingState.model)) {
                     SUCCESS          -> onSuccess()
-                    ERROR_ON_RECEIPT -> _errorState.value = ReceiptError
+                    ERROR_ON_RECEIPT -> onError()
                 }
             }
         }

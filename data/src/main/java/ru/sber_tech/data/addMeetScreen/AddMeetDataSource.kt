@@ -8,6 +8,6 @@ class AddMeetDataSource {
 
     suspend fun addMeet(model: AddMeetModel): MeetStatus{
         delay(3000)
-        return MeetStatus.SUCCESS
+        return MeetStatus.ERROR_ON_RECEIPT
     }
 }
