@@ -1,13 +1,19 @@
 package ru.sber_tech.prod_mobile.screens.addMeetScreen
 
 
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -50,18 +56,33 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
                     Modifier.size(20.dp)
                 )
             }
+
+            val address by viewModel.addressState.collectAsStateWithLifecycle()
+
+            OutlinedCard(
+                Modifier
+                    .padding(start = 15.dp, end = 15.dp)
+                    .fillMaxWidth().clickable {
+                        viewModel.setSearchState("")
+                        navController.navigate(Destinations.SearchScreenRoute.route)
+                    }) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        modifier = Modifier
+                            .padding(15.dp)
+                            .weight(1f),
+                        text = address ?: "Введите город, улицу, дом",
+                    )
+                }
+
+            }
+
             SegmentedButtonSelect(
                 selectedElements = uiState.model.selectedEvents,
                 options = listOf("adasdsad", "asdasd", "sdfsdfds")
             ) {
                 viewModel.addOrDeleteElement(it)
             }
-
-            val address by viewModel.addressState.collectAsStateWithLifecycle()
-            Text(text = address ?: "Ждем", modifier = Modifier.clickable {
-                viewModel.setSearchState("")
-                navController.navigate(Destinations.SearchScreenRoute.route)
-            })
 
             PickDateDialog(onConfirm = {
                 viewModel.setDate(it)
