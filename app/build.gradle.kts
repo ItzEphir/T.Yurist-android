@@ -72,6 +72,9 @@ dependencies {
     //Koin
     implementation(libs.koin.androidx.compose)
 
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.ktor.client.okhttp)
+
     implementation(libs.maps.mobile)
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material3:material3-window-size-class:1.1.2")
