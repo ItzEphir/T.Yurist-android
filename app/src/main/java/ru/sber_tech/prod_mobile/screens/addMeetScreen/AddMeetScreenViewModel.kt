@@ -12,19 +12,23 @@ import ru.sber_tech.domain.addMeetScreen.AddMeetState.Loading
 import ru.sber_tech.domain.addMeetScreen.AddMeetUseCase
 import ru.sber_tech.domain.addMeetScreen.MeetStatus.ERROR_ON_RECEIPT
 import ru.sber_tech.domain.addMeetScreen.MeetStatus.SUCCESS
+import ru.sber_tech.domain.getAddress.GetAddressUseCase
 import ru.sber_tech.prod_mobile.utils.GetCoordsCallBack
 
-class AddMeetScreenViewModel(private val addMeetUseCase: AddMeetUseCase) : ViewModel() {
-    
+class AddMeetScreenViewModel(
+    private val addMeetUseCase: AddMeetUseCase,
+    private val getAddressUseCase: GetAddressUseCase,
+) : ViewModel() {
+
     private lateinit var getCoordinates: GetCoordsCallBack
-    
+
     private val _addMeetState = MutableStateFlow<AddMeetState>(Loading)
     val addMeetState = _addMeetState.asStateFlow()
-    
+
     fun loadElements() {
         _addMeetState.value = Adding(model = AddMeetModel(emptyList(), "", "", 0.0, 0.0))
     }
-    
+
     fun addOrDeleteElement(element: String) {
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
@@ -41,11 +45,11 @@ class AddMeetScreenViewModel(private val addMeetUseCase: AddMeetUseCase) : ViewM
             }
         }
     }
-    
+
     fun setCoords(getCoords: GetCoordsCallBack) {
         getCoordinates = getCoords
     }
-    
+
     fun setDate(date: String) {
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
@@ -56,7 +60,7 @@ class AddMeetScreenViewModel(private val addMeetUseCase: AddMeetUseCase) : ViewM
             )
         }
     }
-    
+
     fun setTime(time: String) {
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
@@ -67,7 +71,7 @@ class AddMeetScreenViewModel(private val addMeetUseCase: AddMeetUseCase) : ViewM
             )
         }
     }
-    
+
     fun publish(onSuccess: () -> Unit, onError: () -> Unit) {
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
@@ -85,7 +89,7 @@ class AddMeetScreenViewModel(private val addMeetUseCase: AddMeetUseCase) : ViewM
             )
             viewModelScope.launch {
                 when (addMeetUseCase.execute(addingState.model)) {
-                    SUCCESS          -> onSuccess()
+                    SUCCESS -> onSuccess()
                     ERROR_ON_RECEIPT -> onError()
                 }
             }
