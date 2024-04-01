@@ -31,7 +31,7 @@ fun MainNavGraph(
         composable(route = Destinations.MainScreenRoute.route) { MainScreen(navController) }
         composable(route = Destinations.AddMeetScreenRoute.route) { AddMeetScreen(navController) }
         composable(route = Destinations.EditScreenRoute.route) { backStackEntry ->
-            EditMeetScreen(backStackEntry.arguments?.getString("id"))
+            EditMeetScreen(backStackEntry.arguments?.getString("id")!!)
         }
     }
 }

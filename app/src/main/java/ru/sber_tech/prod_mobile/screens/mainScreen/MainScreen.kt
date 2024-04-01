@@ -29,7 +29,7 @@ fun MainScreen(navController: NavController){
     val viewModel = koinViewModel<MainScreenViewModel>()
 
     val allMeetsState = viewModel.allMeetsState.collectAsState().value
-    Column {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Button(onClick = { navController.navigate(Destinations.AddMeetScreenRoute.route) }) {
             Text(text = "Новая встреча")
         }
