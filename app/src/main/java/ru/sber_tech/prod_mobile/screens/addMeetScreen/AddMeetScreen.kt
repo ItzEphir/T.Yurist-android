@@ -113,7 +113,9 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
                                 ),
                                 modifier =
                                 Modifier.padding(horizontal = 16.dp),
-                                onClick = { viewModel.addOrDeleteElement(element) },
+                                onClick = { viewModel.addOrDeleteElement(element)
+
+                                          },
                                 label = { Text(element.name) },
                                 selected = element in uiState.model.selectedEvents,
                                 leadingIcon = {
@@ -132,6 +134,11 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
                 }
 
             }
+
+            val documents = uiState.model.selectedEvents.fold(initial = mutableListOf<String>()){ acc, operationModel ->
+                acc.addAll(operationModel.documents)
+                acc
+            }.toSet()
 
             ElevatedCard(
                 modifier = Modifier
@@ -211,6 +218,24 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
                     PickTimeDialog(onConfirm = {
                         viewModel.setTime(it)
                     })
+                }
+            }
+
+            if (documents.isNotEmpty()){
+                ElevatedCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 10.dp
+                    )
+                ){
+                    Text(text = "Необходимые документы", style = MaterialTheme.typography.titleLarge, modifier =  Modifier.padding(16.dp))
+                    for (i in documents){
+                        Text(text = i, modifier = Modifier.padding(bottom = 16.dp, start = 16.dp, end = 16.dp))
+                    }
+
                 }
             }
             val context = LocalContext.current
