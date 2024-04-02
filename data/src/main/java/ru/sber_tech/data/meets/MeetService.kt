@@ -9,7 +9,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.json.Json
 
-class MeetService(val httpClient: HttpClient) {
+class MeetService(private val httpClient: HttpClient) {
     private val json = Json { ignoreUnknownKeys = true }
     suspend fun getMeets(limit: Int, offset: Int): List<MeetDto>? {
         return try {
@@ -73,8 +73,6 @@ class MeetService(val httpClient: HttpClient) {
             val response = httpClient.delete("http://158.160.114.41:8080/meets/$id"){
                 headers["Content-Type"]="application/json"
             }
-            val jsonString = response.bodyAsText()
-            json.decodeFromString<String>(jsonString)
             true
         } catch (e: Exception) {
             e.printStackTrace()

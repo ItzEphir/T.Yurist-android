@@ -30,4 +30,7 @@ class EditMeetRepositoryImpl(
         return response?.toEditMeetModel(operations ?: emptyList())
     }
     
+    override suspend fun deleteMeet(id: String): Boolean {
+        return service.deleteMeet(id)
+    }
 }
