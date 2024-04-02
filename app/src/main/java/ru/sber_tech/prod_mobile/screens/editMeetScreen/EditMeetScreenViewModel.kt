@@ -5,22 +5,38 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import ru.sber_tech.domain.editMeetState.EditMeetModel
-import ru.sber_tech.domain.editMeetState.EditMeetState
-import ru.sber_tech.domain.editMeetState.EditMeetState.Editing
-import ru.sber_tech.domain.editMeetState.EditMeetState.Loading
+import ru.sber_tech.domain.editMeetScreen.EditMeetState
+import ru.sber_tech.domain.editMeetScreen.EditMeetState.*
+import ru.sber_tech.domain.editMeetScreen.EditMeetUseCase
+import ru.sber_tech.domain.editMeetScreen.GetMeetUseCase
+import ru.sber_tech.domain.operations.GetOperationsUseCase
+import ru.sber_tech.domain.operations.OperationModel
 
-class EditMeetScreenViewModel : ViewModel() {
+class EditMeetScreenViewModel(
+    private val editMeetUseCase: EditMeetUseCase,
+    private val getMeetUseCase: GetMeetUseCase,
+    private val getOperationsUseCase: GetOperationsUseCase
+) : ViewModel() {
     private val _editMeetState = MutableStateFlow<EditMeetState>(Loading)
     val editMeetState = _editMeetState.asStateFlow()
     
-    fun load() {
+    private val _operations = MutableStateFlow<List<OperationModel>>(emptyList())
+    val operations = _operations.asStateFlow()
+    
+    fun load(id: String) {
         viewModelScope.launch {
-            _editMeetState.value = Editing(EditMeetModel(emptyList(), "", ""))
+            when(val operations = getOperationsUseCase.invoke()){
+                null ->_editMeetState.value = ErrorOnReceipt
+                else -> _operations.value = operations
+            }
+            when(val editMeetModel = getMeetUseCase.invoke(id)){
+                null -> _editMeetState.value = ErrorOnReceipt
+                else -> _editMeetState.value = Editing(model = editMeetModel)
+            }
         }
     }
     
-    fun addOrDeleteElement(element: String) {
+    fun addOrDeleteElement(element: OperationModel) {
         if (editMeetState.value is Editing) {
             val editingState = editMeetState.value as Editing
             if (element in editingState.model.selectedEvents) {
@@ -33,6 +49,37 @@ class EditMeetScreenViewModel : ViewModel() {
                         selectedEvents = editingState.model.selectedEvents + listOf(element)
                     )
                 )
+            }
+        }
+    }
+    
+    fun setDate(date: String){
+        if(editMeetState.value is Editing){
+            val editingState = editMeetState.value as Editing
+            _editMeetState.value = editingState.copy(model = editingState.model.copy(
+                date = date
+            ))
+        }
+    }
+    
+    fun setTime(time: String){
+        if(editMeetState.value is Editing){
+            val editingState = editMeetState.value as Editing
+            _editMeetState.value = editingState.copy(model = editingState.model.copy(
+                time = time
+            ))
+        }
+    }
+    
+    fun publish(id: String, onSuccess: () -> Unit, onError: () -> Unit){
+        if(editMeetState.value is Editing){
+            val editingState = editMeetState.value as Editing
+            
+            viewModelScope.launch {
+                when(editMeetUseCase.invoke(id, editingState.model)){
+                    true  -> onSuccess()
+                    false -> onError()
+                }
             }
         }
     }

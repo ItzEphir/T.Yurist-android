@@ -4,6 +4,8 @@ import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 import ru.sber_tech.domain.addMeetScreen.AddMeetUseCase
+import ru.sber_tech.domain.editMeetScreen.EditMeetUseCase
+import ru.sber_tech.domain.editMeetScreen.GetMeetUseCase
 import ru.sber_tech.domain.getAddress.GetAddressUseCase
 import ru.sber_tech.domain.getCoordinates.GetCoordinatesByAddressRepository
 import ru.sber_tech.domain.getCoordinates.GetCoordinatesByAddressUseCase
@@ -18,4 +20,6 @@ val domainModule = module {
     factoryOf(::GetCoordinatesByAddressUseCase)
     factoryOf(::SearchUseCase)
     factoryOf(::GetOperationsUseCase)
+    factoryOf(::EditMeetUseCase)
+    factoryOf(::GetMeetUseCase)
 }
