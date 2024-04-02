@@ -4,6 +4,7 @@ import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 import ru.sber_tech.domain.addMeetScreen.AddMeetUseCase
+import ru.sber_tech.domain.editMeetScreen.DeleteMeetUseCase
 import ru.sber_tech.domain.editMeetScreen.EditMeetUseCase
 import ru.sber_tech.domain.editMeetScreen.GetMeetUseCase
 import ru.sber_tech.domain.getAddress.GetAddressUseCase
@@ -22,4 +23,5 @@ val domainModule = module {
     factoryOf(::GetOperationsUseCase)
     factoryOf(::EditMeetUseCase)
     factoryOf(::GetMeetUseCase)
+    factoryOf(::DeleteMeetUseCase)
 }

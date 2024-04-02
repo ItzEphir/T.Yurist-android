@@ -41,8 +41,8 @@ fun EditMeetScreen(id: String, navController: NavController) {
         is Editing -> {
             val operations by viewModel.operations.collectAsStateWithLifecycle()
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-
-
+                
+                
                 Row(
                     Modifier.padding(vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -55,13 +55,13 @@ fun EditMeetScreen(id: String, navController: NavController) {
                     }
                     Text(text = "Детали", style = MaterialTheme.typography.headlineSmall)
                 }
-
-
+                
+                
                 Box {
                     YandexMap2(editMeetModel = (uiState as Editing).model, onBack = {
                         navController.popBackStack()
                     })
-
+                    
                     Image(
                         painter = painterResource(id = drawable.map_cursor),
                         contentDescription = null,
@@ -72,6 +72,38 @@ fun EditMeetScreen(id: String, navController: NavController) {
                             .size(20.dp)
                     )
                 }
+                
+                ElevatedCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 10.dp
+                    )
+                ) {
+                    Text(
+                        text = "Адрес доставки",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    Card(
+                        Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(15.dp)
+                                    .weight(1f),
+                                text = (uiState as Editing).model.address,
+                            )
+                        }
+                        
+                    }
+                    
+                }
+                
                 ElevatedCard(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -94,18 +126,14 @@ fun EditMeetScreen(id: String, navController: NavController) {
                         horizontalArrangement = Arrangement.Start,
                     ) {
                         operations.fastForEachIndexed { index, element ->
-                            InputChip(
-                                colors = InputChipDefaults.inputChipColors(
-                                    selectedContainerColor = Color(
-                                        android.graphics.Color.rgb(
-                                            157,
-                                            195,
-                                            254
-                                        )
+                            InputChip(colors = InputChipDefaults.inputChipColors(
+                                selectedContainerColor = Color(
+                                    android.graphics.Color.rgb(
+                                        157, 195, 254
                                     )
-                                ),
-                                modifier =
-                                Modifier.padding(horizontal = 16.dp),
+                                )
+                            ),
+                                modifier = Modifier.padding(horizontal = 16.dp),
                                 onClick = { viewModel.addOrDeleteElement(element) },
                                 label = { Text(element.name) },
                                 selected = element in (uiState as Editing).model.selectedEvents,
@@ -117,15 +145,14 @@ fun EditMeetScreen(id: String, navController: NavController) {
                                             modifier = Modifier.size(FilterChipDefaults.IconSize)
                                         )
                                     }
-
-                                }
-                            )
+                                    
+                                })
                         }
                     }
                 }
-
-
-
+                
+                
+                
                 ElevatedCard(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -135,7 +162,7 @@ fun EditMeetScreen(id: String, navController: NavController) {
                         defaultElevation = 10.dp
                     )
                 ) {
-
+                    
                     val date = (uiState as Editing).model.date
                     Text(
                         text = if (date == "") "Выберите дату" else "Дата: ${
@@ -151,9 +178,9 @@ fun EditMeetScreen(id: String, navController: NavController) {
                             viewModel.setDate(it)
                         })
                     }
-
+                    
                 }
-
+                
                 ElevatedCard(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -175,32 +202,51 @@ fun EditMeetScreen(id: String, navController: NavController) {
                         })
                     }
                 }
-                val context = LocalContext.current
-                Button(
-                    onClick = {
-                        viewModel.publish(id, onSuccess = {
-                            navController.popBackStack()
-                        }, onError = {
-                            Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
-                        })
-                    },
-                    modifier = Modifier
-                        .padding(bottom = 30.dp, top = 30.dp)
-                        .align(Alignment.CenterHorizontally),
-                    enabled = (uiState as Editing).model.date != "" && (uiState as Editing).model.time != "" && (uiState as Editing).model.selectedEvents.isNotEmpty(),
-                ) {
-                    Text(text = "Готово", color = Color.Black)
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    
+                    val context = LocalContext.current
+                    Button(
+                        onClick = {
+                            viewModel.publish(id, onSuccess = {
+                                navController.popBackStack()
+                            }, onError = {
+                                Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
+                            })
+                        },
+                        modifier = Modifier
+                            .padding(vertical = 32.dp, horizontal = 16.dp)
+                            .align(Alignment.CenterStart),
+                        enabled = (uiState as Editing).model.date != "" && (uiState as Editing).model.time != "" && (uiState as Editing).model.selectedEvents.isNotEmpty(),
+                    ) {
+                        Text(text = "Готово", color = Color.Black)
+                    }
+                    
+                    Button(
+                        onClick = {
+                            viewModel.delete(id, onSuccess = {
+                                navController.popBackStack()
+                            }, onError = {
+                                Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
+                            })
+                        },
+                        modifier = Modifier
+                            .padding(vertical = 32.dp, horizontal = 16.dp)
+                            .align(Alignment.CenterEnd),
+                        enabled = (uiState as Editing).model.date != "" && (uiState as Editing).model.time != "" && (uiState as Editing).model.selectedEvents.isNotEmpty(),
+                    ) {
+                        Text(text = "Удалить", color = Color.Black)
+                    }
                 }
             }
         }
-
+        
         is ErrorOnReceipt -> Box(modifier = Modifier.fillMaxSize()) {
             Text(text = "Ошибка", modifier = Modifier.align(Alignment.Center))
         }
-
+        
         is Loading -> Box(modifier = Modifier.fillMaxSize()) {
             CircularProgressIndicator(modifier = Modifier.align(Companion.Center))
         }
     }
-
+    
 }
