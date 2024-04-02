@@ -6,12 +6,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.sber_tech.domain.mainScreen.AllMeetsState
+import ru.sber_tech.domain.mainScreen.AllMeetsState.Loading
 import ru.sber_tech.domain.mainScreen.GetAllMeetsUseCase
 
 class MainScreenViewModel(
     private val getAllMeetsUseCase: GetAllMeetsUseCase
 ): ViewModel() {
-    private val _allMeetsState = MutableStateFlow<AllMeetsState>(AllMeetsState.Loading)
+    private val _allMeetsState = MutableStateFlow<AllMeetsState>(Loading)
     val allMeetsState = _allMeetsState.asStateFlow()
 
     fun load() {
@@ -26,5 +27,10 @@ class MainScreenViewModel(
             onEnd()
         }
         
+    }
+    
+    fun reload() {
+        _allMeetsState.value = Loading
+        load()
     }
 }

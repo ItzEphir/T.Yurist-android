@@ -65,6 +65,11 @@ class AddMeetScreenViewModel(
         }
     }
 
+    fun reload(){
+        _addMeetState.value = Loading
+        loadElements()
+    }
+    
     fun setDefaultCameraPosition() {
         readCoordinatesCallback.read(CoordinatesPoint(55.751400, 37.618844))
     }

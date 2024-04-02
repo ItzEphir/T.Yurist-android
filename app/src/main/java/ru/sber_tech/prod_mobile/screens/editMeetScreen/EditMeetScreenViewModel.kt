@@ -38,6 +38,11 @@ class EditMeetScreenViewModel(
         }
     }
     
+    fun reload(id: String){
+        _editMeetState.value = Loading
+        load(id)
+    }
+    
     fun addOrDeleteElement(element: OperationModel) {
         if (editMeetState.value is Editing) {
             val editingState = editMeetState.value as Editing

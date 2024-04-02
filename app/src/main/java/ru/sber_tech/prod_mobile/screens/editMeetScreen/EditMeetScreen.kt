@@ -280,8 +280,15 @@ fun EditMeetScreen(id: String, navController: NavController) {
             }
         }
         
-        is ErrorOnReceipt -> Box(modifier = Modifier.fillMaxSize()) {
-            Text(text = "Ошибка", modifier = Modifier.align(Alignment.Center))
+        is ErrorOnReceipt -> Column(
+            Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = "Ошибка при получении")
+            Button(onClick = {
+                viewModel.reload(id)
+            }){
+                Text("Повторить")
+            }
         }
         
         is Loading -> Box(modifier = Modifier.fillMaxSize()) {

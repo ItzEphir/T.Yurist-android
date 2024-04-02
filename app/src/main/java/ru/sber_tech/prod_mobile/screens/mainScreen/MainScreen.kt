@@ -122,10 +122,15 @@ fun MainScreen(navController: NavController) {
                 }
                 
                 ErrorOnReceipt -> {
-                    Box(
-                        Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+                    Column(
+                        Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(text = "Ошибка при получении")
+                        Button(onClick = {
+                            viewModel.reload()
+                        }){
+                            Text("Повторить")
+                        }
                     }
                 }
                 

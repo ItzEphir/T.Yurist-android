@@ -261,18 +261,21 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
                     })
                 },
                 modifier = Modifier.padding(bottom = 30.dp, top = 30.dp),
-                enabled = uiState.model.date != "" && uiState.model.time != "" && uiState.model.selectedEvents.isNotEmpty(),
+                enabled = uiState.model.date != "" && uiState.model.time != "" && uiState.model.selectedEvents.isNotEmpty() && uiState.model.address.isNotBlank(),
             ) {
                 Text(text = "Готово", color = Color.Black)
             }
         }
         
-        is ErrorOnReceipt -> Box(modifier = Modifier.fillMaxSize()) {
-            Text(
-                text = "Ошибка при получении",
-                modifier = Modifier.align(Alignment.Center),
-                textAlign = TextAlign.Center,
-            )
+        is ErrorOnReceipt -> Column(
+            Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = "Ошибка при получении")
+            Button(onClick = {
+                viewModel.reload()
+            }){
+                Text("Повторить")
+            }
         }
         
         is Loading -> Box(modifier = Modifier.fillMaxSize()) {
