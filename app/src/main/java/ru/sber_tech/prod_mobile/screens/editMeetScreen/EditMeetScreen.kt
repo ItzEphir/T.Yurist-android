@@ -2,6 +2,7 @@ package ru.sber_tech.prod_mobile.screens.editMeetScreen
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -26,6 +27,7 @@ import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
 import ru.sber_tech.domain.editMeetScreen.EditMeetState.*
 import ru.sber_tech.prod_mobile.R.drawable
+import ru.sber_tech.prod_mobile.navigation.Destinations
 import ru.sber_tech.prod_mobile.screens.addMeetScreen.PickDateDialog
 import ru.sber_tech.prod_mobile.screens.addMeetScreen.PickTimeDialog
 
@@ -72,6 +74,34 @@ fun EditMeetScreen(id: String, navController: NavController) {
                             .size(20.dp)
                     )
                 }
+                
+                ElevatedCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 10.dp
+                    )
+                ){
+                    Text(text = "Адрес доставки", style = MaterialTheme.typography.titleLarge, modifier =  Modifier.padding(16.dp))
+                    Card(
+                        Modifier
+                            .fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = Color.White)) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(15.dp)
+                                    .weight(1f),
+                                text = (uiState as Editing).model.address,
+                            )
+                        }
+                        
+                    }
+                    
+                }
+                
                 ElevatedCard(
                     modifier = Modifier
                         .fillMaxWidth()

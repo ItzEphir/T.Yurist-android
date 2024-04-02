@@ -142,8 +142,6 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
                     defaultElevation = 10.dp
                 )
             ){
-
-                val date =uiState.model.date
                 Text(text = "Адрес доставки", style = MaterialTheme.typography.titleLarge, modifier =  Modifier.padding(16.dp))
                 OutlinedCard(
                     Modifier
