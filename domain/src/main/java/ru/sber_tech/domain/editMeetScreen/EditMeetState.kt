@@ -1,4 +1,4 @@
-package ru.sber_tech.domain.editMeetState
+package ru.sber_tech.domain.editMeetScreen
 
 sealed interface EditMeetState {
     data object Loading : EditMeetState

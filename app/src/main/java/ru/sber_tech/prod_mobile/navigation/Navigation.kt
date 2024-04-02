@@ -42,7 +42,7 @@ fun MainNavGraph(
             AddMeetScreen(navController, viewModel)
         }
         composable(route = Destinations.EditScreenRoute.route) { backStackEntry ->
-            EditMeetScreen(backStackEntry.arguments?.getString("id")!!)
+            EditMeetScreen(backStackEntry.arguments?.getString("id")!!, navController)
         }
         composable(route = Destinations.SearchScreenRoute.route) {
             SearchScreen(navController, viewModel)
