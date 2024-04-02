@@ -241,6 +241,35 @@ fun EditMeetScreen(id: String, navController: NavController) {
                         
                     }
                 }
+
+                val people = (uiState as Editing).model.people
+
+
+                ElevatedCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 10.dp
+                    )
+                ) {
+                    Text(
+                        text = "Представители клиента",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    people.forEach {
+                        Text(
+                            text = "${it.surname} ${it.name}, ${it.position}",
+                            modifier = Modifier.padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                        )
+                    }
+
+                }
+
+
+
                 
                 Box(modifier = Modifier.fillMaxWidth()) {
                     
