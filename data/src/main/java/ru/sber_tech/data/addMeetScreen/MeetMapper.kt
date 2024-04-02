@@ -56,6 +56,7 @@ fun MeetDto.toEditMeetModel(operations: List<OperationModel>) = EditMeetModel(
     selectedEvents = operations,
     latitude = placeLatitude,
     longitude = placeLongitude,
+    people = clientSidePeople.map { it.toPersonModel() }
 )
 
 private fun Person.toPersonModel() = PersonModel(

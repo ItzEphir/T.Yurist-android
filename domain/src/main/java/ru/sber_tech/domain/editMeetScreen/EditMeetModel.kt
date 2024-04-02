@@ -9,4 +9,5 @@ data class EditMeetModel(
     val latitude: Double,
     val longitude: Double,
     val address: String,
+    val people: List<PersonModel>,
 )
