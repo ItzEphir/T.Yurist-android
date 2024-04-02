@@ -52,12 +52,14 @@ class AddMeetScreenViewModel(
 
     fun loadElements() {
         viewModelScope.launch {
-            when (val operations = getOperationsUseCase.invoke()) {
-                null -> _addMeetState.value = ErrorOnReceipt
-                else -> {
-                    _operations.value = operations
-                    _addMeetState.value =
-                        Adding(model = AddMeetModel(emptyList(), "", "", 0.0, 0.0, ""))
+            if (addMeetState.value is Loading) {
+                when (val operations = getOperationsUseCase.invoke()) {
+                    null -> _addMeetState.value = ErrorOnReceipt
+                    else -> {
+                        _operations.value = operations
+                        _addMeetState.value =
+                            Adding(model = AddMeetModel(emptyList(), "", "", 0.0, 0.0, ""))
+                    }
                 }
             }
         }
@@ -211,6 +213,7 @@ class AddMeetScreenViewModel(
                     latitude = point.latitude, longitude = point.longitude
                 )
             )
+            println("addMeetState $addMeetState")
             viewModelScope.launch {
                 when (addMeetUseCase.execute(addingState.model)) {
                     SUCCESS -> onSuccess()

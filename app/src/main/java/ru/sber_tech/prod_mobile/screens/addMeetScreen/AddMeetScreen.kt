@@ -56,6 +56,7 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
 
 
     LaunchedEffect(key1 = Unit, block = {
+        println("Refresh")
         viewModel.loadElements()
     })
 
