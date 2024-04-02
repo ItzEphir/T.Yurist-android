@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -75,10 +76,8 @@ object YandexMap {
             // Adds view to Compose
             AndroidView(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(15.dp)
-                    .clip(RoundedCornerShape(25.dp))
-                    .aspectRatio(1f),
+                    .fillMaxSize()
+                    ,
                 factory = { context ->
                     MapView(context).apply {
                         view = this

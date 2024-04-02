@@ -21,8 +21,7 @@ import androidx.compose.ui.unit.dp
 fun SearchCard(address: String, onClick: (address: String) -> Unit) {
     ElevatedCard(modifier = Modifier
         .fillMaxWidth()
-        .height(100.dp)
-        .padding(16.dp)
+        .padding(8.dp)
         .clickable {
             onClick(address)
         }, shape = RoundedCornerShape(16.dp),
@@ -31,7 +30,7 @@ fun SearchCard(address: String, onClick: (address: String) -> Unit) {
             defaultElevation = 10.dp
         )
     ) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
+        Box(modifier = Modifier.fillMaxSize().padding(vertical = 8.dp), contentAlignment = Alignment.CenterStart) {
             Text(text = address, modifier = Modifier.padding(8.dp))
         }
     }

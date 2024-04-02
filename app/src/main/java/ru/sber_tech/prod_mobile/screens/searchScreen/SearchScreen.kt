@@ -27,7 +27,7 @@ fun SearchScreen(navController: NavController, viewModel: AddMeetScreenViewModel
             viewModel.setSearchState(it)
         }, modifier = Modifier.fillMaxWidth().padding(15.dp))
         val addresses by viewModel.addresses.collectAsStateWithLifecycle()
-        LazyColumn {
+        LazyColumn(Modifier.fillMaxSize()) {
             items(addresses){item ->
                 SearchCard(address = item, onClick = {
                     viewModel.setCameraPosition(it)

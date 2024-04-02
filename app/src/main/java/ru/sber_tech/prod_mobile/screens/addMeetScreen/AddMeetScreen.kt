@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.*
@@ -45,12 +47,13 @@ import ru.sber_tech.prod_mobile.utils.DateUtils
 import ru.sber_tech.prod_mobile.utils.GetLocation
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewModel) {
 
-    GetLocation(viewModel = viewModel)
+
 
     LaunchedEffect(key1 = Unit, block = {
         viewModel.loadElements()
@@ -59,37 +62,12 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
     when (val uiState = viewModel.addMeetState.collectAsStateWithLifecycle().value) {
         is Adding -> Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.verticalScroll(
             rememberScrollState())) {
-            Box(contentAlignment = Alignment.Center) {
-                YandexMap.Render(viewModel, onBack = {
-                    navController.popBackStack()
-                })
-                Image(
-                    painter = painterResource(id = drawable.map_cursor),
-                    contentDescription = "",
-                    Modifier.size(20.dp)
-                )
-            }
+
 
             val address by viewModel.addressState.collectAsStateWithLifecycle()
 
-            OutlinedCard(
-                Modifier
-                    .padding(start = 15.dp, end = 15.dp)
-                    .fillMaxWidth()
-                    .clickable {
-                        viewModel.setSearchState("")
-                        navController.navigate(Destinations.SearchScreenRoute.route)
-                    }) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .weight(1f),
-                        text = address ?: "Введите город, улицу, дом",
-                    )
-                }
 
-            }
+
 
             val operations by viewModel.operations.collectAsStateWithLifecycle()
 
@@ -98,16 +76,22 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
 
 
             Column {
+                Row(Modifier.padding(vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = { navController.popBackStack() }, Modifier.padding(horizontal = 8.dp)) {
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "")
+                    }
+                    Text(text = "Новая встреча", style = MaterialTheme.typography.headlineSmall)
+                }
                 ElevatedCard(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 10.dp
                     )
                 ) {
-                    Text(text = "Выберите услуги", style = MaterialTheme.typography.headlineLarge, modifier =  Modifier.padding(16.dp))
+                    Text(text = "Выберите услуги", style = MaterialTheme.typography.titleLarge, modifier =  Modifier.padding(16.dp))
                     FlowRow(
                         Modifier
                             .fillMaxWidth(1f)
@@ -139,6 +123,41 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
 
             }
 
+            ElevatedCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 10.dp
+                )
+            ){
+
+                val date =uiState.model.date
+                Text(text = "Адрес доставки", style = MaterialTheme.typography.titleLarge, modifier =  Modifier.padding(16.dp))
+                OutlinedCard(
+                    Modifier
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                        .fillMaxWidth()
+                        .clickable {
+                            viewModel.setSearchState("")
+                            navController.navigate(Destinations.MapScreen.route)
+                        },
+                    colors = CardDefaults.cardColors(containerColor = Color.White)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            modifier = Modifier
+                                .padding(15.dp)
+                                .weight(1f),
+                            text = address ?: "Введите город, улицу, дом",
+                        )
+                    }
+
+                }
+
+            }
+
+
 
 
 
@@ -150,7 +169,7 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 10.dp
@@ -158,7 +177,7 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
             ){
 
                 val date =uiState.model.date
-                Text(text = if(date == "") "Выберите дату" else date, style = MaterialTheme.typography.headlineLarge, modifier =  Modifier.padding(16.dp))
+                Text(text = if(date == "") "Выберите дату" else "Дата: ${date.replace("-", ".")}", style = MaterialTheme.typography.headlineSmall, modifier =  Modifier.padding(16.dp))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     PickDateDialog(onConfirm = {
                         viewModel.setDate(it)
@@ -170,14 +189,14 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 10.dp
                 )
             ){
                 val time =uiState.model.time
-                Text(text = if(time == "") "Выберите время" else time, style = MaterialTheme.typography.headlineLarge, modifier =  Modifier.padding(16.dp))
+                Text(text = if(time == "") "Выберите время" else "Время: ${time}", style = MaterialTheme.typography.titleLarge, modifier =  Modifier.padding(16.dp))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                     PickTimeDialog(onConfirm = {
                         viewModel.setTime(it)
@@ -193,7 +212,7 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
                         Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
                     })
                 },
-                modifier = Modifier.padding(bottom = 40.dp, top = 24.dp),
+                modifier = Modifier.padding(bottom = 30.dp, top = 30.dp),
                 enabled = uiState.model.date != "" && uiState.model.time != "" && uiState.model.selectedEvents.isNotEmpty(),
             ) {
                 Text(text = "Готово", color = Color.Black)
@@ -271,12 +290,13 @@ fun PickTimeDialog(onConfirm: (String) -> Unit) {
     }
 
     if (openDialog) {
-        val timePickerState = rememberTimePickerState()
+        val timePickerState = rememberTimePickerState(is24Hour = true)
+        println("${timePickerState.hour}:${timePickerState.minute}")
         val pickedTime by remember {
             derivedStateOf { LocalTime.of(timePickerState.hour, timePickerState.minute) }
         }
         val formattedTime by remember {
-            derivedStateOf { DateTimeFormatter.ofPattern("hh:mm").format(pickedTime) }
+            derivedStateOf { DateTimeFormatter.ofPattern("HH:mm").format(pickedTime) }
         }
 
         TimePickerDialog(
