@@ -28,9 +28,7 @@ fun MainScreen(navController: NavController) {
         ExtendedFloatingActionButton(onClick = { navController.navigate(Destinations.AddMeetScreenRoute.route) },
             containerColor = Color(rgb(254, 216, 42)),
             icon = {
-                Icon(
-                    imageVector = Icons.Default.Add, contentDescription = ""
-                )
+
             },
             text = { Text(text = "Новая встреча", color = Color.Black) })
     }) {

@@ -131,7 +131,9 @@ fun EditMeetScreen(id: String, navController: NavController) {
                             InputChip(colors = InputChipDefaults.inputChipColors(
                                 selectedContainerColor = Color(
                                     android.graphics.Color.rgb(
-                                        157, 195, 254
+                                        254,
+                                        216,
+                                        42
                                     )
                                 )
                             ),
