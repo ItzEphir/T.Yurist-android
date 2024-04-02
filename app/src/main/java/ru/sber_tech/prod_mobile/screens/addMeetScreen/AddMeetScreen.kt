@@ -257,7 +257,7 @@ fun AddMeetScreen(navController: NavController, viewModel: AddMeetScreenViewMode
                     viewModel.publish(onSuccess = {
                         navController.popBackStack()
                     }, onError = {
-                        Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Ошибка", Toast.LENGTH_LONG).show()
                     })
                 },
                 modifier = Modifier.padding(bottom = 30.dp, top = 30.dp),

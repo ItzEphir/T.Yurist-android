@@ -279,7 +279,7 @@ fun EditMeetScreen(id: String, navController: NavController) {
                             viewModel.publish(id, onSuccess = {
                                 navController.popBackStack()
                             }, onError = {
-                                Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, "Ошибка", Toast.LENGTH_LONG).show()
                             })
                         },
                         modifier = Modifier
@@ -295,7 +295,7 @@ fun EditMeetScreen(id: String, navController: NavController) {
                             viewModel.delete(id, onSuccess = {
                                 navController.popBackStack()
                             }, onError = {
-                                Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
+                                Toast.makeText(context, "Ошибка", Toast.LENGTH_LONG).show()
                             })
                         },
                         modifier = Modifier
