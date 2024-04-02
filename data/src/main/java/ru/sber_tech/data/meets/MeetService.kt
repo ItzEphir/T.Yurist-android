@@ -14,7 +14,7 @@ class MeetService(val httpClient: HttpClient) {
     suspend fun getMeets(limit: Int, offset: Int): List<MeetDto>? {
         return try {
             val response =
-                httpClient.get("http://158.160.114.41:8080/meets?limit=$limit&offset=$offset"){
+                httpClient.get("http://158.160.114.41:8080/meets"){
                     headers["Content-Type"]="application/json"
                 }
             val jsonString = response.bodyAsText()

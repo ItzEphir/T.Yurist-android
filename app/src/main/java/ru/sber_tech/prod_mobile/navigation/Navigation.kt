@@ -1,6 +1,9 @@
 package ru.sber_tech.prod_mobile.navigation
 
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideOut
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -41,7 +44,11 @@ fun MainNavGraph(
         composable(route = Destinations.AddMeetScreenRoute.route) {
             AddMeetScreen(navController, viewModel)
         }
-        composable(route = Destinations.EditScreenRoute.route) { backStackEntry ->
+        composable(route = Destinations.EditScreenRoute.route, exitTransition = {
+            slideOut {
+                IntOffset(-it.width, -it.height)
+            }
+        }) { backStackEntry ->
             EditMeetScreen(backStackEntry.arguments?.getString("id")!!, navController)
         }
         composable(route = Destinations.SearchScreenRoute.route) {

@@ -41,23 +41,8 @@ fun EditMeetScreen(id: String, navController: NavController) {
         is Editing -> {
             val operations by viewModel.operations.collectAsStateWithLifecycle()
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                
-                Box {
-                    YandexMap2(editMeetModel = (uiState as Editing).model, onBack = {
-                        navController.popBackStack()
-                    })
-                    
-                    Image(
-                        painter = painterResource(id = drawable.map_cursor),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .align(
-                                Alignment.Center
-                            )
-                            .size(20.dp)
-                    )
-                }
-                
+
+
                 Row(
                     Modifier.padding(vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -68,7 +53,24 @@ fun EditMeetScreen(id: String, navController: NavController) {
                     ) {
                         Icon(imageVector = Filled.ArrowBack, contentDescription = "")
                     }
-                    Text(text = "Новая встреча", style = MaterialTheme.typography.headlineSmall)
+                    Text(text = "Детали", style = MaterialTheme.typography.headlineSmall)
+                }
+
+
+                Box {
+                    YandexMap2(editMeetModel = (uiState as Editing).model, onBack = {
+                        navController.popBackStack()
+                    })
+
+                    Image(
+                        painter = painterResource(id = drawable.map_cursor),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .align(
+                                Alignment.Center
+                            )
+                            .size(20.dp)
+                    )
                 }
                 ElevatedCard(
                     modifier = Modifier
@@ -92,7 +94,18 @@ fun EditMeetScreen(id: String, navController: NavController) {
                         horizontalArrangement = Arrangement.Start,
                     ) {
                         operations.fastForEachIndexed { index, element ->
-                            InputChip(modifier = Modifier.padding(horizontal = 16.dp),
+                            InputChip(
+                                colors = InputChipDefaults.inputChipColors(
+                                    selectedContainerColor = Color(
+                                        android.graphics.Color.rgb(
+                                            157,
+                                            195,
+                                            254
+                                        )
+                                    )
+                                ),
+                                modifier =
+                                Modifier.padding(horizontal = 16.dp),
                                 onClick = { viewModel.addOrDeleteElement(element) },
                                 label = { Text(element.name) },
                                 selected = element in (uiState as Editing).model.selectedEvents,
@@ -104,14 +117,15 @@ fun EditMeetScreen(id: String, navController: NavController) {
                                             modifier = Modifier.size(FilterChipDefaults.IconSize)
                                         )
                                     }
-                                    
-                                })
+
+                                }
+                            )
                         }
                     }
                 }
-                
-                
-                
+
+
+
                 ElevatedCard(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -121,7 +135,7 @@ fun EditMeetScreen(id: String, navController: NavController) {
                         defaultElevation = 10.dp
                     )
                 ) {
-                    
+
                     val date = (uiState as Editing).model.date
                     Text(
                         text = if (date == "") "Выберите дату" else "Дата: ${
@@ -137,9 +151,9 @@ fun EditMeetScreen(id: String, navController: NavController) {
                             viewModel.setDate(it)
                         })
                     }
-                    
+
                 }
-                
+
                 ElevatedCard(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -179,14 +193,14 @@ fun EditMeetScreen(id: String, navController: NavController) {
                 }
             }
         }
-        
+
         is ErrorOnReceipt -> Box(modifier = Modifier.fillMaxSize()) {
             Text(text = "Ошибка", modifier = Modifier.align(Alignment.Center))
         }
-        
+
         is Loading -> Box(modifier = Modifier.fillMaxSize()) {
             CircularProgressIndicator(modifier = Modifier.align(Companion.Center))
         }
     }
-    
+
 }
