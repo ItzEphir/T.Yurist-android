@@ -11,7 +11,7 @@ class GetCoordinatesByAddressService(private val httpClient: HttpClient) {
     suspend fun getCoordinates(address: String): CoordinatesPoint? {
         return try {
             val response =
-                httpClient.get("https://geocode-maps.yandex.ru/1.x/?apikey=947c501d-64a3-4725-87a5-3c6995e9c104&geocode=$address&format=json&lang=ru_RU&results=1")
+                httpClient.get("https://geocode-maps.yandex.ru/1.x/?apikey=e17f8f6a-8444-4283-98ad-7e49c56a6deb&geocode=$address&format=json&lang=ru_RU&results=1")
             val jsonString: String = response.bodyAsText()
             println(jsonString)
             json.decodeFromString<GetCoordsDto>(jsonString).response.GeoObjectCollection.featureMember[0].GeoObject.Point.convert()

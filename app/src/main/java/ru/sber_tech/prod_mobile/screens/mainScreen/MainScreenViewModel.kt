@@ -14,7 +14,7 @@ class MainScreenViewModel(
     private val _allMeetsState = MutableStateFlow<AllMeetsState>(AllMeetsState.Loading)
     val allMeetsState = _allMeetsState.asStateFlow()
 
-    init {
+    fun load() {
         viewModelScope.launch {
             _allMeetsState.value = getAllMeetsUseCase.execute()
         }

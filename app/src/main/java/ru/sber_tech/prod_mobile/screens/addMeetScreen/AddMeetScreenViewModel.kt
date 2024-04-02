@@ -29,43 +29,44 @@ class AddMeetScreenViewModel(
     private val searchUseCase: SearchUseCase,
     private val getOperationsUseCase: GetOperationsUseCase,
 ) : ViewModel() {
-    
+
     private lateinit var getCoordinatesCallback: GetCoordsCallBack
     private lateinit var readCoordinatesCallback: ReadCoordinatesCallBack
-    
+
     private val _addMeetState = MutableStateFlow<AddMeetState>(Loading)
     val addMeetState = _addMeetState.asStateFlow()
-    
+
     private val _addressState = MutableStateFlow<String?>(null)
     val addressState = _addressState.asStateFlow()
-    
+
     private val _location = MutableStateFlow<Location?>(null)
-    
+
     private val _searchState = MutableStateFlow("")
     val searchState = _searchState.asStateFlow()
-    
+
     private val _addresses = MutableStateFlow(emptyList<String>())
     val addresses = _addresses.asStateFlow()
-    
+
     private val _operations = MutableStateFlow<List<OperationModel>>(emptyList())
     val operations = _operations.asStateFlow()
-    
+
     fun loadElements() {
         viewModelScope.launch {
-            when(val operations = getOperationsUseCase.invoke()){
+            when (val operations = getOperationsUseCase.invoke()) {
                 null -> _addMeetState.value = ErrorOnReceipt
                 else -> {
                     _operations.value = operations
-                    _addMeetState.value = Adding(model = AddMeetModel(emptyList(), "", "", 0.0, 0.0, ""))
+                    _addMeetState.value =
+                        Adding(model = AddMeetModel(emptyList(), "", "", 0.0, 0.0, ""))
                 }
             }
         }
     }
-    
+
     fun setDefaultCameraPosition() {
         readCoordinatesCallback.read(CoordinatesPoint(55.751400, 37.618844))
     }
-    
+
     fun addOrDeleteElement(element: OperationModel) {
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
@@ -82,15 +83,15 @@ class AddMeetScreenViewModel(
             }
         }
     }
-    
+
     fun setReadCoordsClbk(rCCallback: ReadCoordinatesCallBack) {
         readCoordinatesCallback = rCCallback
     }
-    
+
     fun setCoords(getCoords: GetCoordsCallBack) {
         getCoordinatesCallback = getCoords
     }
-    
+
     fun setPoint(latitude: Double, longitude: Double) {
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
@@ -100,7 +101,8 @@ class AddMeetScreenViewModel(
                 )
             )
             viewModelScope.launch {
-                _addressState.value = getAddressUseCase.invoke(latitude, longitude)
+                _addressState.value =
+                    getAddressUseCase.invoke(latitude, longitude).also { println("address: $it") }
                 _addMeetState.value = (addMeetState.value as Adding).copy(
                     model = (addMeetState.value as Adding).model.copy(
                         address = addressState.value ?: ""
@@ -109,7 +111,20 @@ class AddMeetScreenViewModel(
             }
         }
     }
-    
+
+    fun setAddress() {
+        if (addMeetState.value is Adding) {
+            if (addressState.value != null) {
+                val addingState = addMeetState.value as Adding
+                _addMeetState.value = addingState.copy(
+                    model = addingState.model.copy(
+                        address = addressState.value!!
+                    )
+                )
+            }
+        }
+    }
+
     fun setDate(date: String) {
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
@@ -120,7 +135,7 @@ class AddMeetScreenViewModel(
             )
         }
     }
-    
+
     fun setTime(time: String) {
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
@@ -131,26 +146,28 @@ class AddMeetScreenViewModel(
             )
         }
     }
-    
+
     fun setCameraPosition(address: String) {
         viewModelScope.launch {
             getCoordinatesByAddressUseCase(address).also {
                 Log.d("WWW", it.toString())
             }?.let {
                 if (addMeetState.value is Adding) {
+                    println("jhgjrighrjfksdh")
                     val addingState = addMeetState.value as Adding
                     _addMeetState.value = addingState.copy(
                         model = addingState.model.copy(
+                            address = address,
                             latitude = it.latitude, longitude = it.longitude
                         )
                     )
-                    
+
                     readCoordinatesCallback.read(CoordinatesPoint(it.latitude, it.longitude))
                 }
             }
         }
     }
-    
+
     fun setLocation(location: Location?) {
         _location.value = location
         if (addMeetState.value is Adding) {
@@ -161,7 +178,7 @@ class AddMeetScreenViewModel(
                         latitude = location.latitude, longitude = location.longitude
                     )
                 )
-                
+
                 readCoordinatesCallback.read(
                     CoordinatesPoint(
                         location.latitude, location.longitude
@@ -170,7 +187,7 @@ class AddMeetScreenViewModel(
             }
         }
     }
-    
+
     fun setSearchState(request: String) {
         _searchState.value = request
         val point = _location.value?.let {
@@ -179,9 +196,9 @@ class AddMeetScreenViewModel(
         viewModelScope.launch {
             _addresses.value = searchUseCase(request, point)
         }
-        
+
     }
-    
+
     fun publish(onSuccess: () -> Unit, onError: () -> Unit) {
         if (addMeetState.value is Adding) {
             val addingState = addMeetState.value as Adding
@@ -196,7 +213,7 @@ class AddMeetScreenViewModel(
             )
             viewModelScope.launch {
                 when (addMeetUseCase.execute(addingState.model)) {
-                    SUCCESS          -> onSuccess()
+                    SUCCESS -> onSuccess()
                     ERROR_ON_RECEIPT -> onError()
                 }
             }

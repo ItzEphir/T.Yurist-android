@@ -49,7 +49,7 @@ fun MapScreen(navController: NavController, viewModel: AddMeetScreenViewModel) {
             )
         }
 
-        Column(modifier = Modifier.height(200.dp)){
+        Column(modifier = Modifier.height(200.dp)) {
             OutlinedCard(
                 Modifier
                     .padding(16.dp)
@@ -69,7 +69,10 @@ fun MapScreen(navController: NavController, viewModel: AddMeetScreenViewModel) {
 
             }
             Button(
-                onClick = { navController.popBackStack() },
+                onClick = {
+                    viewModel.setAddress()
+                    navController.popBackStack()
+                },
                 modifier = Modifier
                     .padding(bottom = 16.dp)
                     .align(Alignment.CenterHorizontally)
@@ -77,7 +80,6 @@ fun MapScreen(navController: NavController, viewModel: AddMeetScreenViewModel) {
                 Text(text = "Продолжить", color = Color.Black)
             }
         }
-
 
 
     }
