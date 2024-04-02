@@ -1,6 +1,7 @@
 package ru.sber_tech.prod_mobile.screens.editMeetScreen
 
 import android.widget.Toast
+import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -202,6 +204,42 @@ fun EditMeetScreen(id: String, navController: NavController) {
                         })
                     }
                 }
+                
+                val documents =
+                    (uiState as Editing).model.selectedEvents.fold(initial = mutableListOf<String>()) { acc, operationModel ->
+                        acc.addAll(operationModel.documents)
+                        acc
+                    }.toSet()
+                
+                AnimatedVisibility(visible = documents.isNotEmpty(), enter = fadeIn() + slideIn {
+                    IntOffset(0, -2 * it.height)
+                }, exit = fadeOut() + slideOut {
+                    IntOffset(0, -2 * it.height)
+                }) {
+                    ElevatedCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 10.dp
+                        )
+                    ) {
+                        Text(
+                            text = "Необходимые документы",
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                        documents.forEach {
+                            Text(
+                                text = it,
+                                modifier = Modifier.padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                            )
+                        }
+                        
+                    }
+                }
+                
                 Box(modifier = Modifier.fillMaxWidth()) {
                     
                     val context = LocalContext.current

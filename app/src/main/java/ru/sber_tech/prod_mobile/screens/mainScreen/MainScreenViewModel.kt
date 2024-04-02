@@ -19,7 +19,12 @@ class MainScreenViewModel(
             _allMeetsState.value = getAllMeetsUseCase.execute()
         }
     }
-
-
-
+    
+    fun refresh(onEnd: () -> Unit){
+        viewModelScope.launch {
+            _allMeetsState.value = getAllMeetsUseCase.execute()
+            onEnd()
+        }
+        
+    }
 }
