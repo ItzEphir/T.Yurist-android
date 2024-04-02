@@ -51,7 +51,7 @@ fun MeetDto.toMeetModel(operations: List<OperationModel>) = MeetModel(
 
 fun MeetDto.toEditMeetModel(operations: List<OperationModel>) = EditMeetModel(
     date = dateTime.split("T")[0],
-    time = dateTime.split("T")[1],
+    time = dateTime.split("T")[1].slice(0..4),
     address = placeAddress,
     selectedEvents = operations,
     latitude = placeLatitude,

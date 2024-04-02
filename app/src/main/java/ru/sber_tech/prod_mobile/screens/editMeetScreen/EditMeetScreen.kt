@@ -255,7 +255,7 @@ fun EditMeetScreen(id: String, navController: NavController) {
                         },
                         modifier = Modifier
                             .padding(vertical = 32.dp, horizontal = 16.dp)
-                            .align(Alignment.CenterStart),
+                            .align(Alignment.CenterEnd),
                         enabled = (uiState as Editing).model.date != "" && (uiState as Editing).model.time != "" && (uiState as Editing).model.selectedEvents.isNotEmpty(),
                     ) {
                         Text(text = "Готово", color = Color.Black)
@@ -271,7 +271,7 @@ fun EditMeetScreen(id: String, navController: NavController) {
                         },
                         modifier = Modifier
                             .padding(vertical = 32.dp, horizontal = 16.dp)
-                            .align(Alignment.CenterEnd),
+                            .align(Alignment.CenterStart),
                         enabled = (uiState as Editing).model.date != "" && (uiState as Editing).model.time != "" && (uiState as Editing).model.selectedEvents.isNotEmpty(),
                     ) {
                         Text(text = "Удалить", color = Color.Black)

@@ -91,7 +91,7 @@ fun MainScreen(navController: NavController) {
                                                 item.date.replace(
                                                     "-", "."
                                                 )
-                                            } в ${item.time}",
+                                            } в ${item.time.slice(0..4)}",
                                             Modifier.padding(16.dp),
                                             style = MaterialTheme.typography.titleMedium
                                         )
