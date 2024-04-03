@@ -65,11 +65,11 @@ class AddMeetScreenViewModel(
         }
     }
 
-    fun reload(){
+    fun reload() {
         _addMeetState.value = Loading
         loadElements()
     }
-    
+
     fun setDefaultCameraPosition() {
         readCoordinatesCallback.read(CoordinatesPoint(55.751400, 37.618844))
     }
@@ -221,8 +221,15 @@ class AddMeetScreenViewModel(
             println("addMeetState $addMeetState")
             viewModelScope.launch {
                 when (addMeetUseCase.execute(addingState.model)) {
-                    SUCCESS -> onSuccess()
-                    ERROR_ON_RECEIPT -> onError()
+                    SUCCESS -> {
+                        onSuccess()
+                        _addMeetState.value = Loading
+                        _addressState.value = null
+                    }
+
+                    ERROR_ON_RECEIPT -> {
+                        onError()
+                    }
                 }
             }
         }

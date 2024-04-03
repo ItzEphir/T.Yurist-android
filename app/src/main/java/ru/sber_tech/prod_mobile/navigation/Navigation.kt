@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideOut
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntOffset.Companion
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
