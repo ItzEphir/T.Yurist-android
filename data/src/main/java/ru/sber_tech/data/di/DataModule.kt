@@ -12,6 +12,7 @@ import org.koin.dsl.module
 import ru.sber_tech.data.addMeetScreen.AddMeetDataSource
 import ru.sber_tech.data.addMeetScreen.AddMeetRepositoryImpl
 import ru.sber_tech.data.editMeetScreen.EditMeetRepositoryImpl
+import ru.sber_tech.data.editMeetScreen.RepresentativeService
 import ru.sber_tech.data.getAddress.GetAddressRepositoryImpl
 import ru.sber_tech.data.getAddress.GetAddressService
 import ru.sber_tech.data.getAllMeets.AllMeetsRepositoryImpl
@@ -44,6 +45,7 @@ val dataModule = module {
     singleOf(::OperationsService) { bind<OperationsService>() }
     singleOf(::OperationsRepositoryImpl) { bind<OperationsRepository>() }
     singleOf(::EditMeetRepositoryImpl) { bind<EditMeetRepository>() }
+    singleOf(::RepresentativeService) { bind<RepresentativeService>() }
     
     single {
         HttpClient(OkHttp) {

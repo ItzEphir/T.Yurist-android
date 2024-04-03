@@ -131,9 +131,7 @@ fun EditMeetScreen(id: String, navController: NavController) {
                             InputChip(colors = InputChipDefaults.inputChipColors(
                                 selectedContainerColor = Color(
                                     android.graphics.Color.rgb(
-                                        254,
-                                        216,
-                                        42
+                                        254, 216, 42
                                     )
                                 )
                             ),
@@ -234,17 +232,44 @@ fun EditMeetScreen(id: String, navController: NavController) {
                         )
                         documents.forEach {
                             Text(
-                                text = it,
-                                modifier = Modifier.padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                                text = it, modifier = Modifier.padding(
+                                    bottom = 16.dp, start = 16.dp, end = 16.dp
+                                )
                             )
                         }
                         
                     }
                 }
-
+                
+                val representative = (uiState as Editing).model.representative
+                if (representative != null) {
+                    ElevatedCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 10.dp
+                        )
+                    ) {
+                        Text(
+                            text = "Представитель организации",
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                        Text(
+                            text = "${representative.surname} ${representative.name}, ${representative.position}",
+                            modifier = Modifier.padding(
+                                bottom = 16.dp, start = 16.dp, end = 16.dp
+                            )
+                        )
+                        
+                    }
+                }
+                
                 val people = (uiState as Editing).model.people
-
-
+                
+                
                 ElevatedCard(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -265,11 +290,11 @@ fun EditMeetScreen(id: String, navController: NavController) {
                             modifier = Modifier.padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
                         )
                     }
-
+                    
                 }
-
-
-
+                
+                
+                
                 
                 Box(modifier = Modifier.fillMaxWidth()) {
                     
@@ -310,12 +335,14 @@ fun EditMeetScreen(id: String, navController: NavController) {
         }
         
         is ErrorOnReceipt -> Column(
-            Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
+            Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(text = "Ошибка при получении")
             Button(onClick = {
                 viewModel.reload(id)
-            }){
+            }) {
                 Text("Повторить")
             }
         }

@@ -8,6 +8,7 @@ data class EditMeetModel(
     val date: String,
     val latitude: Double,
     val longitude: Double,
+    val representative: RepresentativeModel?,
     val address: String,
     val people: List<PersonModel>,
 )
