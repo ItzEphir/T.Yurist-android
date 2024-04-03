@@ -73,6 +73,8 @@ dependencies {
     //Koin
     implementation(libs.koin.androidx.compose)
 
+    implementation(libs.coil.compose)
+
 
     implementation(libs.maps.mobile)
     implementation("androidx.compose.material3:material3")

@@ -5,6 +5,7 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.AutoMirrored.Filled
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -25,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import org.koin.androidx.compose.koinViewModel
 import ru.sber_tech.domain.editMeetScreen.EditMeetState.*
 import ru.sber_tech.prod_mobile.R.drawable
@@ -252,17 +255,28 @@ fun EditMeetScreen(id: String, navController: NavController) {
                             defaultElevation = 10.dp
                         )
                     ) {
+
                         Text(
                             text = "Представитель организации",
                             style = MaterialTheme.typography.titleLarge,
                             modifier = Modifier.padding(16.dp)
                         )
-                        Text(
-                            text = "${representative.surname} ${representative.name}, ${representative.position}",
-                            modifier = Modifier.padding(
-                                bottom = 16.dp, start = 16.dp, end = 16.dp
+                        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = rememberAsyncImagePainter(representative.photoUrl),
+                                contentDescription = "null",
+                                modifier = Modifier
+                                    .size(75.dp)
+                                    .clip(RoundedCornerShape(16.dp))
                             )
-                        )
+                            Text(
+                                text = "${representative.surname} ${representative.name}, ${representative.position}",
+                                modifier = Modifier.padding(
+                                     start = 16.dp, end = 16.dp
+                                )
+                            )
+                        }
+
                         
                     }
                 }
